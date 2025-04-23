@@ -1,9 +1,33 @@
-#### Visualisation résultats isotopie #### 
+---
+title: "GFF_Isotope"
+author: "David Chassagnaud"
+date: "`r Sys.Date()`"
 
+format:
+  html:
+    toc: true         # Active la table des matières
+    toc-depth: 2      # Niveau de profondeur de la table des matières (1 à 6)
+    toc-location: right  # Position : left, right ou float
+    number-sections: true  # Numérote les sections
+    theme: united      # Tu peux changer le thème : cosmo, flatly, united, etc.
+    code-fold: true   # Permet de replier/déplier les blocs de code
+    code-tools: true  # Affiche les outils (copier le code, etc.)
+    smooth-scroll: true  # Ajoute un défilement fluide
+  #  include-after-body: footer.html # préciser le chemin du fichier(mis dans qmd)
+   # css: style.css # préciser le chemin du fichier(mis dans qmd)
+---
+
+Visualisation des résultats d'analyses isotopiques
+
+```{r Packages, message = FALSE}
 library(readxl)
 library(ggplot2)
+library(dplyr)
+```
 
-#### Carbone ####
+# Carbone
+
+```{r Carbone, message = FALSE}
 GFF_isotopie_C <- read_excel("~/Desktop/GFF_isotopie_C.xlsx", 
                              col_types = c("text", "text", "text", 
                                            "numeric", "numeric", "text", "text", 
@@ -25,7 +49,7 @@ ggplot(GFF_isotopie_C, aes(x = years, y = d13C, color = Prov)) +
   facet_wrap(~site, labeller = labeller(site = function(x) paste("site :", x))) +
   theme_minimal() +
   labs(
-    title = "Chronologie de δ13C par site et provenance",
+    title = "Chronologie des valeurs δ13C par site et provenance",
     x = "Année",
     y = expression(delta^{13}*C~("\u2030")),
     color = "Provenance"
@@ -35,8 +59,12 @@ ggplot(GFF_isotopie_C, aes(x = years, y = d13C, color = Prov)) +
     plot.title = element_text(face = "bold", size = 14)
   )
 
-#### Oxygène ####
+```
 
+
+# Oxygène
+
+```{r Oxygène}
 GFF_isotopie_O <- read_excel("~/Desktop/GFF_isotopie_O.xlsx", 
                              col_types = c("text", "numeric", "text", 
                                            "text", "numeric", "numeric", "text", 
@@ -61,7 +89,7 @@ ggplot(GFF_isotopie_O, aes(x = years, y = `d18O - IRMS (‰)`, color = Prov)) +
   facet_wrap(~site, labeller = labeller(site = function(x) paste("site :", x))) +
   theme_minimal() +
   labs(
-    title = "Chronologie δ18O par site et provenance",
+    title = "Chronologie des valeurs δ18O par site et provenance",
     x = "Année",
     y = expression(delta^{18}*O~("\u2030")),
     color = "Provenance"
@@ -70,3 +98,6 @@ ggplot(GFF_isotopie_O, aes(x = years, y = `d18O - IRMS (‰)`, color = Prov)) +
     axis.text.x = element_text(angle = 90, hjust = 1),
     plot.title = element_text(face = "bold", size = 14)
   )
+
+```
+
