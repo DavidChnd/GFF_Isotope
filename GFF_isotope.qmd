@@ -13,12 +13,18 @@ format:
     code-fold: true   # Permet de replier/déplier les blocs de code
     code-tools: true  # Affiche les outils (copier le code, etc.)
     smooth-scroll: true  # Ajoute un défilement fluide
+    fig-width: 12 # Pour gèrer la taille des figure par défaut 
+    fig-height: 9
+    fig-align: center # Alignement des figures par défaut 
+    lightbox: true
+    
   #  include-after-body: footer.html # préciser le chemin du fichier(mis dans qmd)
    # css: style.css # préciser le chemin du fichier(mis dans qmd)
 ---
 
-Visualisation des résultats d'analyses isotopiques
+Visualisation des résultats préliminaires d'analyses isotopiques
 
+# Packages
 ```{r Packages, message = FALSE}
 library(readxl)
 library(ggplot2)
@@ -27,7 +33,7 @@ library(dplyr)
 
 # Carbone
 
-```{r Carbone, message = FALSE}
+```{r Carbone, message = FALSE, warning=FALSE, results='hide'}
 GFF_isotopie_C <- read_excel("~/Desktop/GFF_isotopie_C.xlsx", 
                              col_types = c("text", "text", "text", 
                                            "numeric", "numeric", "text", "text", 
@@ -61,10 +67,37 @@ ggplot(GFF_isotopie_C, aes(x = years, y = d13C, color = Prov)) +
 
 ```
 
+```{r Carbone 2, message = FALSE, warning=FALSE, results='hide'}
+# Pour ploter Carbone avec la même chronologie que l'oxygène 
+
+#Créer une copie du jeu de données avec years en numérique
+GFF_isotopie_C$years_num <- as.numeric(as.character(GFF_isotopie_C$years))
+
+# Filtrage de la plage 2000–2009
+GFF_isotopie_C_filt <- GFF_isotopie_C %>%
+  filter(years_num >= 2000 & years_num <= 2009)
+
+ggplot(GFF_isotopie_C_filt, aes(x = years, y = d13C, color = Prov)) +
+  geom_point(alpha = 0.7, size = 2) +
+  stat_summary(fun = mean, geom = "line", aes(group = Prov), linetype = "solid", size = 0.8) +
+  facet_wrap(~site, labeller = labeller(site = function(x) paste("site :", x))) +
+  theme_minimal() +
+  labs(
+    title = "Chronologie de δ13C (2000–2009) par site et provenance",
+    x = "Année",
+    y = expression(delta^{13}*C~("\u2030")),
+    color = "Provenance"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+```
 
 # Oxygène
 
-```{r Oxygène}
+```{r Oxygène, message = FALSE, warning=FALSE, results='hide'}
 GFF_isotopie_O <- read_excel("~/Desktop/GFF_isotopie_O.xlsx", 
                              col_types = c("text", "numeric", "text", 
                                            "text", "numeric", "numeric", "text", 
